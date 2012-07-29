@@ -1,3 +1,9 @@
+keeptalking (2.20.1) pulse; urgency=low
+
+  * restartgdm: updated to match latest laiv-setup's restartgdm.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sun, 29 Jul 2012 18:28:47 +0200
+
 keeptalking (2.20.0) pulse; urgency=low
 
   * Initial release.

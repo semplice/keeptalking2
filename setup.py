@@ -6,7 +6,7 @@
 from distutils.core import setup
 
 setup(name='keeptalking',
-	version='2.20.0',
+	version='2.20.1',
 	description='Language/Keyboard/Timezone libraries',
 	author='Eugenio Paolantonio',
 	author_email='me@medesimo.eu',
