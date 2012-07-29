@@ -1,0 +1,12 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Name=Internationalization & Localization
+Name[it_IT]=Internazionalizzazione e localizzazione
+Comment=Configure Locale, Keyboard and Timezone
+Comment[it_IT]=Configura il Locale, la Tastiera ed il Timezone
+Categories=System;Settings;
+Exec=pkexec /usr/bin/keeptalking_gtk.py
+Icon=preferences-desktop-locale
