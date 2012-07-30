@@ -1,8 +1,9 @@
-keeptalking (2.20.2) pulse; urgency=low
+keeptalking (2.20.2-1) pulse; urgency=low
 
   * library/locale: ensure we check the proper line when searching for default locale
   * keeptalking_gtk.py: check for locale in the dictionary when determine if it is utf8 or not.
   * keeptalking_cli.py: check for root privilegies.
+  * debian/*: we are not native now!
 
  -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Mon, 30 Jul 2012 11:34:59 +0200
 
