@@ -260,7 +260,7 @@ class GUI:
 	def is_utf8(self, _locale):
 		""" Checks if the default locale is utf8. """
 		
-		if locale.codepages[_locale] == "UTF-8":
+		if _locale in locale.codepages and locale.codepages[_locale] == "UTF-8":
 			return True
 		else:
 			return False

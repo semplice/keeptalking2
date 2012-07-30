@@ -18,10 +18,15 @@ class Locale:
 	def default(self):
 		""" Returns the default locale on the system. """
 		
-		with open(os.path.join(self.target, "etc/default/locale")) as f:
-			line = f.readline().replace('LANG="',"").replace('"\n',"")
+		target = None
 		
-		return line
+		with open(os.path.join(self.target, "etc/default/locale")) as f:
+			for line in f.readlines():
+				if "LANG=" in line:
+					target = line.strip('LANG="').strip('"\n')
+					break
+		
+		return target
 
 	@property
 	def supported(self):

@@ -366,7 +366,10 @@ def tutte_insieme():
 	locale()
 	keyboard()
 	timezone()
-	
+
+if os.environ["USER"] != "root":
+	raise core.UserError(_("You need to be root in order to use Keeptalking."))
+
 
 gui = GUI() # Initialize interface
 
