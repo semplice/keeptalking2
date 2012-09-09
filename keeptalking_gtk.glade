@@ -141,7 +141,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="top_padding">5</property>
-                    <property name="bottom_padding">5</property>
                     <property name="left_padding">5</property>
                     <property name="right_padding">5</property>
                     <child>
@@ -223,6 +222,58 @@
                     <property name="expand">True</property>
                     <property name="fill">True</property>
                     <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkAlignment" id="alignment10">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="bottom_padding">5</property>
+                    <property name="left_padding">5</property>
+                    <property name="right_padding">5</property>
+                    <child>
+                      <object class="GtkFrame" id="tweaks_frame">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label_xalign">0</property>
+                        <property name="shadow_type">none</property>
+                        <child>
+                          <object class="GtkAlignment" id="alignment11">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="top_padding">3</property>
+                            <property name="bottom_padding">3</property>
+                            <property name="left_padding">12</property>
+                            <property name="right_padding">12</property>
+                            <child>
+                              <object class="GtkCheckButton" id="savespace_checkbox">
+                                <property name="label" translatable="yes">Save space by installing only translations of the selected language</property>
+                                <property name="use_action_appearance">False</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="use_action_appearance">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel" id="label7">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">&lt;b&gt;Tweaks&lt;/b&gt;</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
               </object>
@@ -649,4 +700,134 @@ Please select your locale below.</property>
     </action-widgets>
   </object>
   <object class="GtkListStore" id="liststore1"/>
+  <object class="GtkMessageDialog" id="savespace_dialog">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Do you want to purge already installed translations?</property>
+    <property name="modal">True</property>
+    <property name="window_position">center</property>
+    <property name="icon_name">preferences-desktop-locale</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="message_type">question</property>
+    <property name="text" translatable="yes">&lt;big&gt;&lt;b&gt;Do you want to purge already installed translations?&lt;/b&gt;&lt;/big&gt;</property>
+    <property name="use_markup">True</property>
+    <property name="secondary_text" translatable="yes">Already installed package translations are not touched by this feature unless they are upgraded.
+You may want to delete already installed translations. You can do so by pressing "&lt;b&gt;Yes&lt;/b&gt;".
+Keep in mind that this may be dangerous.
+
+If you wish to begin excluding translations only from now on, you can safely press "&lt;b&gt;No&lt;/b&gt;".</property>
+    <property name="secondary_use_markup">True</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="messagedialog-vbox5">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="messagedialog-action_area5">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="savespace_no">
+                <property name="label">gtk-no</property>
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="savespace_yes">
+                <property name="label">gtk-yes</property>
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">savespace_no</action-widget>
+      <action-widget response="0">savespace_yes</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkMessageDialog" id="savespace_disabled_dialog">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Some translations may not be installed!</property>
+    <property name="modal">True</property>
+    <property name="window_position">center</property>
+    <property name="icon_name">preferences-desktop-locale</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="message_type">warning</property>
+    <property name="text" translatable="yes">&lt;big&gt;&lt;b&gt;Some translations may not be installed!&lt;/b&gt;&lt;/big&gt;</property>
+    <property name="use_markup">True</property>
+    <property name="secondary_text" translatable="yes">As the save space feature was previously activated, some translations may not be installed.
+Newly installed or upgraded packages will ship the new translations in place.</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="messagedialog-vbox6">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="messagedialog-action_area6">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <object class="GtkButton" id="savespace_disabled_close">
+                <property name="label">gtk-close</property>
+                <property name="use_action_appearance">False</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">savespace_disabled_close</action-widget>
+    </action-widgets>
+  </object>
 </interface>

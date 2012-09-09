@@ -6,7 +6,7 @@
 # This file is part of the keeptalking package.
 #
 
-import os
+import os, shutil
 import keeptalking.core as core
 
 class Locale:
@@ -54,6 +54,15 @@ class Locale:
 				codepages[line[0]] = line[1].replace("\n","")
 
 		return codepages
+	
+	@property
+	def is_savingspace(self):
+		""" Returns True if the 'Save space' function is enabled, False if not. """
+		
+		if os.path.exists(os.path.join(self.target, "etc/dpkg/dpkg.cfg.d/keeptalking")):
+			return True
+		else:
+			return False
 
 	def human_form(self, all=True):
 		""" Returns a dictionary which contains, for every supported locale, its "human" form. """
@@ -158,3 +167,72 @@ class Locale:
 			core.sexec("chroot %s /usr/sbin/locale-gen" % (self.target))
 		else:
 			core.sexec("/usr/sbin/locale-gen")
+	
+	def savespace_detect(self, locale):
+		""" Internal. """
+
+		manlang = locale.split(".")[0].split("@")[0].split("_")[0].lower()
+		
+		basedir = os.path.join(self.target, "usr/share/locale/")
+		
+		# Get appropriate language.
+		for lang in (locale.split(".")[0], locale.split(".")[0].split("@")[0], locale.split(".")[0].split("@")[0].split("_")[0]):
+			lang = lang.lower()
+			finaldir = os.path.join(basedir, lang)
+			if os.path.exists(finaldir): break
+		
+		return manlang, lang, finaldir
+
+	def savespace_enable(self, locale):
+		""" Enables savespace for the language of the given locale. """
+				
+		manlang, lang, finaldir = self.savespace_detect(locale)
+				
+		with open(os.path.join(self.target, "etc/dpkg/dpkg.cfg.d/keeptalking"), "w") as f:
+			f.write("""## DPKG RULES FOR %(lang)s WRITTEN BY KEEPTALKING
+
+# Drop every locale except %(lang)s
+path-exclude=/usr/share/locale/*
+path-include=%(finaldir)s/*
+path-include=/usr/share/locale/locale.alias
+
+# Drop man pages except english and %(manlang)s
+path-exclude=/usr/share/man/*
+path-include=/usr/share/man/man[1-9]/*
+path-include=/usr/share/man/%(manlang)s*/*
+""" % {"lang":lang, "manlang":manlang, "finaldir": finaldir})
+
+	def savespace_disable(self):
+		""" Disables savespace (if enabled) """
+		
+		rules = os.path.join(self.target, "etc/dpkg/dpkg.cfg.d/keeptalking")
+		if not os.path.exists(rules): return
+		
+		os.remove(rules)
+	
+	def savespace_purge(self, locale):
+		""" Purges foreign locales. """
+
+		manlang, lang, finaldir = self.savespace_detect(locale)
+		
+		# Purge things on /usr/share/locale and /usr/share/man
+		# Doing something like "dpkg-purge" which scans the dpkg config and removes everything from the
+		# path-exclude and path-include variables would be way cooler, but hey.
+		
+		toremove = []
+		
+		for item in os.listdir(os.path.join(self.target, "usr/share/locale")):
+			if item not in (lang, "locale.alias"): # skip the language directory and locale.alias
+				toremove.append(os.path.join(self.target, "usr/share/locale/%s" % item))
+
+		for item in os.listdir(os.path.join(self.target, "usr/share/man")):
+			if item != manlang and not item.startswith("man"): # skip man* and language directory
+				toremove.append(os.path.join(self.target, "usr/share/man/%s" % item))
+		
+		for item in toremove:	
+			if os.path.isdir(item):
+				shutil.rmtree(item)
+			else:
+				os.remove(item)
+				
+

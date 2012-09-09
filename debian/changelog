@@ -1,3 +1,9 @@
+keeptalking (2.21.0-1) pulse; urgency=low
+
+  * Added save space support (only via library or GTK frontend)
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sun, 09 Sep 2012 19:23:31 +0200
+
 keeptalking (2.20.2-1) pulse; urgency=low
 
   * library/locale: ensure we check the proper line when searching for default locale

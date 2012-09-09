@@ -31,7 +31,7 @@ timezone = TimeZone.TimeZone()
 tzone_countries = timezone.associate_timezones_to_countries()
 
 class Apply(threading.Thread):
-	def __init__(self, parent, lay, loc, var, mod, tim):
+	def __init__(self, parent, lay, loc, var, mod, tim, savespace, savespacepurge):
 		self.parent = parent
 		
 		self.lay = lay
@@ -39,25 +39,50 @@ class Apply(threading.Thread):
 		self.var = var
 		self.mod = mod
 		self.tim = tim
+		self.savespace = savespace
+		self.savespacepurge = savespacepurge
 	
 		threading.Thread.__init__(self)
 	
 	def run(self):
 		""" Do things! """
-		
+				
 		## Set locale:
 		try:
 			if self.loc:
 				GObject.idle_add(self.parent.progress_text.set_text, _("Setting locale..."))
 				locale.set(self.loc)
 			
-			GObject.idle_add(self.parent.progress_bar.set_fraction, 0.3333333333333333)
+			GObject.idle_add(self.parent.progress_bar.set_fraction, 0.2)
+			
+			if self.savespace:
+				if not self.loc:
+					loc = locale.default
+				else:
+					loc = self.loc
+				GObject.idle_add(self.parent.progress_text.set_text, _("Enabling 'Save space' feature..."))
+				locale.savespace_enable(loc)
+			else:
+				GObject.idle_add(self.parent.progress_text.set_text, _("Disabling 'Save space' feature..."))
+				locale.savespace_disable()
+			
+			GObject.idle_add(self.parent.progress_bar.set_fraction, 0.4)
+			
+			if self.savespace and self.savespacepurge:
+				if not self.loc:
+					loc = locale.default
+				else:
+					loc = self.loc
+				GObject.idle_add(self.parent.progress_text.set_text, _("Removing older translations... This may take a while."))
+				locale.savespace_purge(loc)
+			
+			GObject.idle_add(self.parent.progress_bar.set_fraction, 0.6)
 			
 			## Set keyboard
 			GObject.idle_add(self.parent.progress_text.set_text, _("Setting keyboard..."))
 			keyboard.set(layout=self.lay, model=self.mod, variant=self.var)
 			
-			GObject.idle_add(self.parent.progress_bar.set_fraction, 0.6666666666666666) # Devilish!
+			GObject.idle_add(self.parent.progress_bar.set_fraction, 0.8)
 			
 			## Set timezone
 			if self.tim:
@@ -84,6 +109,9 @@ class GUI:
 		
 		self.is_building = False
 		
+		self.savespace_activated = False
+		self.purge_older_translations = None
+		
 		self.builder = Gtk.Builder()
 		self.builder.add_from_file(uipath)
 		
@@ -103,6 +131,16 @@ class GUI:
 		self.ok_dialog.connect("destroy", self.quit)
 		self.daje_button = self.builder.get_object("daje_close")
 		self.daje_button.connect("clicked", self.quit)
+		
+		self.savespace_dialog = self.builder.get_object("savespace_dialog")
+		self.savespace_yes = self.builder.get_object("savespace_yes")
+		self.savespace_yes.connect("clicked", self.on_savespace_yes)
+		self.savespace_no = self.builder.get_object("savespace_no")
+		self.savespace_no.connect("clicked", self.on_savespace_no)
+		
+		self.savespace_disabled_dialog = self.builder.get_object("savespace_disabled_dialog")
+		self.savespace_disabled_close = self.builder.get_object("savespace_disabled_close")
+		self.savespace_disabled_close.connect("clicked", self.on_savespace_disabled_close)
 		
 		# Get notebook
 		self.notebook = self.builder.get_object("notebook")
@@ -135,6 +173,10 @@ class GUI:
 		## Get the checkbox.
 		self.locale_checkbox = self.builder.get_object("all_locales_checkbutton")
 		
+		## Tweaks
+		self.tweaks_frame = self.builder.get_object("tweaks_frame")
+		self.savespace_checkbox = self.builder.get_object("savespace_checkbox")
+		
 		# Populate
 		if self.is_utf8(locale.default):
 			self.populate_locale_model(all=False)
@@ -144,6 +186,11 @@ class GUI:
 			self.locale_checkbox.set_active(True)
 
 		self.locale_checkbox.connect("toggled", self.on_locale_checkbox_toggled)
+		
+		if locale.is_savingspace:
+			self.savespace_activated = True
+			self.savespace_checkbox.set_active(True)
+		self.savespace_checkbox.connect("toggled", self.on_savespace_checkbox_toggled)
 
 		## KEYBOARD PAGE
 		self.keyboard_label = self.builder.get_object("keyblabel")
@@ -206,6 +253,7 @@ class GUI:
 		# Properly set things if live...
 		if live.is_live:
 			self.cancel_button.hide()
+			self.tweaks_frame.hide()
 		else:
 			self.live_box.hide()
 
@@ -230,6 +278,11 @@ class GUI:
 		
 		loc = self.get_selected_locale()
 		if not loc: return
+		
+		# Display warning if self.savespace_activated
+		if self.savespace_activated:
+			GObject.idle_add(self.main_window.set_sensitive, False)
+			GObject.idle_add(self.savespace_disabled_dialog.show)
 		
 		# We need to set the keyboard layout!
 		lay = loc.split(".")[0].split("@")[0].split("_")[1].lower()
@@ -320,6 +373,46 @@ class GUI:
 		
 		return self.timezone_model.get_value(itr, 0)
 
+	def on_savespace_checkbox_toggled(self, obj):
+		""" Triggered when the savespace checkbox has been toggled. """
+		
+		if obj.get_active():
+			# Enabled. Display savespace_dialog
+			
+			self.savespace_activated = True
+			
+			GObject.idle_add(self.main_window.set_sensitive, False)
+			GObject.idle_add(self.savespace_dialog.show)
+		else:
+			# Disabled. Display warning dialog.
+			
+			self.savespace_activated = False
+			
+			GObject.idle_add(self.main_window.set_sensitive, False)
+			GObject.idle_add(self.savespace_disabled_dialog.show)
+	
+	def on_savespace_yes(self, obj):
+		""" Triggered when the Yes button has been pressed on the savespace dialog. """
+		
+		self.purge_older_translations = True
+
+		GObject.idle_add(self.main_window.set_sensitive, True)
+		GObject.idle_add(self.savespace_dialog.hide)
+
+	def on_savespace_no(self, obj):
+		""" Triggered when the No button has been pressed on the savespace dialog. """
+		
+		self.purge_older_translations = False
+
+		GObject.idle_add(self.main_window.set_sensitive, True)
+		GObject.idle_add(self.savespace_dialog.hide)
+
+	def on_savespace_disabled_close(self, obj):
+		""" Triggered when the Close button has been pressed on the savespace_disabled dialog. """
+		
+		GObject.idle_add(self.main_window.set_sensitive, True)
+		GObject.idle_add(self.savespace_disabled_dialog.hide)
+
 	def on_ok_button_clicked(self, obj):
 		""" Triggered when the OK button has been clicked. """
 		
@@ -344,7 +437,7 @@ class GUI:
 		self.ok_button.set_sensitive(False)
 		
 		# Load Apply class, then run it
-		clss = Apply(self, lay=_lay, loc=_loc, var=_var, mod=_mod, tim=_tim)
+		clss = Apply(self, lay=_lay, loc=_loc, var=_var, mod=_mod, tim=_tim, savespace=self.savespace_activated, savespacepurge=self.purge_older_translations)
 		clss.start()
 	
 	def populate_variant_model(self, caller=None, var=None):
@@ -468,7 +561,7 @@ class GUI:
 			if item == locale.default:
 				# save the iter! ;)
 				default = itr
-		self.locale_model.set_sort_column_id(1, Gtk.SortType.ASCENDING)
+			self.locale_model.set_sort_column_id(1, Gtk.SortType.ASCENDING)
 		
 		# Set default
 		if default:
