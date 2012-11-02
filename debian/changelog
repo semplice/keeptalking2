@@ -1,3 +1,9 @@
+keeptalking (2.21.1-1) pulse; urgency=low
+
+  * keeptalking_gtk.py: if skip_live, set semplice-live-mode accordingly to avoid loops.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Fri, 02 Nov 2012 14:57:43 +0100
+
 keeptalking (2.21.0-1) pulse; urgency=low
 
   * Added save space support (only via library or GTK frontend)

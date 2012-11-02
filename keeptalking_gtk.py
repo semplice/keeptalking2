@@ -652,7 +652,11 @@ class GUI:
 
 if live.is_live:
 	# Check!
-	if live.skip_live: sys.exit(0)
+	if live.skip_live:
+		# set semplice-live-mode
+		live.set()
+		# exit
+		sys.exit(0)
 
 g = GUI()
 
