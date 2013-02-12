@@ -1,3 +1,9 @@
+keeptalking (3.0.0-1) unstable; urgency=low
+
+  * Initial upload for current.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Tue, 12 Feb 2013 17:41:28 +0100
+
 keeptalking (2.21.1-1) pulse; urgency=low
 
   * keeptalking_gtk.py: if skip_live, set semplice-live-mode accordingly to avoid loops.
