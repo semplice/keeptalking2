@@ -26,8 +26,8 @@ Description: Internationalization & Localization setting chooser -- Libraries
  .
  This package contains the public keeptalking libraries.
  
-#Package: python-t9n
-#Architecture: all
-#Depends: ${python:Depends}
-#Description: A very simple python translation library
-# t9n is a simple translation library 
+Package: python-t9n
+Architecture: all
+Depends: ${python:Depends}
+Description: A very simple python translation library
+ t9n is a simple translation library 
