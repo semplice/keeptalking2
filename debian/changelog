@@ -1,3 +1,9 @@
+keeptalking (3.10.0-1) unstable; urgency=low
+
+  * Ship t9n.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Thu, 21 Feb 2013 17:02:50 +0100
+
 keeptalking (3.0.0-2) unstable; urgency=low
 
   * Ship t9n as current doesn't have laiv-setup anymore.
