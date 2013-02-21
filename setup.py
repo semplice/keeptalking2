@@ -6,7 +6,7 @@
 from distutils.core import setup
 
 setup(name='keeptalking',
-	version='2.21.0',
+	version='3.10.0',
 	description='Language/Keyboard/Timezone libraries',
 	author='Eugenio Paolantonio',
 	author_email='me@medesimo.eu',
@@ -14,6 +14,7 @@ setup(name='keeptalking',
 	# package_dir={'bin':''},
 	scripts=['keeptalking_gtk.py', 'keeptalking_cli.py'],
 	packages=[
+		"t9n",
 		"keeptalking",
 		"keeptalking.core",
 		"keeptalking.Keyboard",
