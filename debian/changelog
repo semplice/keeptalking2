@@ -1,3 +1,9 @@
+keeptalking (3.10.1-1) unstable; urgency=low
+
+  * Ensure we grab focus on the timezone treeview.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sat, 08 Jun 2013 21:09:46 +0200
+
 keeptalking (3.10.0-1) unstable; urgency=low
 
   * Ship t9n.
