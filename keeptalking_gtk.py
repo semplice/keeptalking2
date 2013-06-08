@@ -246,6 +246,7 @@ class GUI:
 		self.timezone_treeview.append_column(Gtk.TreeViewColumn("Timezone", Gtk.CellRendererText(), text=0))
 		# Populate
 		self.populate_timezone_model()
+		self.timezone_treeview.grab_focus()
 
 		self.main_window.show_all()
 		self.progress_box.hide()
