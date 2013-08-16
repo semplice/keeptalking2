@@ -1,3 +1,9 @@
+keeptalking (4.0.0-1) unstable; urgency=low
+
+  * Properly set the italian translation on the policy file.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Fri, 16 Aug 2013 20:53:56 +0200
+
 keeptalking (3.10.1-1) unstable; urgency=low
 
   * Ensure we grab focus on the timezone treeview.
