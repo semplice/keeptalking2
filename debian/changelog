@@ -1,3 +1,10 @@
+keeptalking (6.0.1-1) unstable; urgency=low
+
+  * keeptalking.Locale.set(): fixed condition for generateonly.
+    I managed to fuck up a simple commit like that. I'm an hero!
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Mon, 30 Dec 2013 14:49:03 +0100
+
 keeptalking (6.0.0-1) unstable; urgency=low
 
   * Fixed the retrieving of nested timezones.
