@@ -25,9 +25,13 @@ class TimeZone:
 
 		supported = {}
 		
-		for root, dirs, files in os.walk("/usr/share/zoneinfo"):
-			n = os.path.basename(root)
-			if n == "zoneinfo": n = "Other"
+		for root, dirs, files in os.walk("/usr/share/zoneinfo/"):
+			
+			n = root.replace("/usr/share/zoneinfo/","").split("/")
+			if n[0] == "": # zoneinfo
+				n = "Other"
+			else:
+				n = "/".join(n)
 			
 			_sup = []
 			
@@ -56,6 +60,9 @@ class TimeZone:
 	
 	def set(self, tzone):
 		""" Permanently set the selected timezone. """
+		
+		if tzone.startswith("Other/"):
+			tzone.replace("Other/","")
 		
 		with open("/etc/timezone", "w") as f:
 			f.write(tzone + "\n")

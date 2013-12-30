@@ -7,6 +7,8 @@
 # This file is part of the keeptalking package.
 #
 
+import signal
+
 from keeptalking import core, Locale, Keyboard, TimeZone, Live
 import os, sys
 import t9n.library as t9n
@@ -660,5 +662,5 @@ if live.is_live:
 		sys.exit(0)
 
 g = GUI()
-
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 Gtk.main()
