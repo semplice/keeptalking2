@@ -143,11 +143,12 @@ class Locale:
 		
 		return best
 	
-	def set(self, locale):
+	def set(self, locale, generateonly=False):
 		""" Sets specified locale in the system's configuration. """
 		
-		with open(os.path.join(self.target, "etc/default/locale"),"w") as f:
-			f.write("LANG=\"%s\"\n" % (locale))
+		if generateonly:
+			with open(os.path.join(self.target, "etc/default/locale"),"w") as f:
+				f.write("LANG=\"%s\"\n" % (locale))
 		
 		for _file in (os.path.join(self.target, "etc/locale.gen"), os.path.join(self.target, "etc/locale-gen.conf")):
 			append = True
