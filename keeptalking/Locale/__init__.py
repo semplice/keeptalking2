@@ -146,7 +146,7 @@ class Locale:
 	def set(self, locale, generateonly=False):
 		""" Sets specified locale in the system's configuration. """
 		
-		if generateonly:
+		if not generateonly:
 			with open(os.path.join(self.target, "etc/default/locale"),"w") as f:
 				f.write("LANG=\"%s\"\n" % (locale))
 		
