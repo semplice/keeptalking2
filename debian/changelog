@@ -1,3 +1,12 @@
+keeptalking (6.0.0-1) unstable; urgency=low
+
+  * Fixed the retrieving of nested timezones.
+  * keeptalking.Locale.set(): added generateonly kwarg.
+    If True, the locale will not be set as the default, but only generated.
+    Default is False.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Mon, 30 Dec 2013 14:43:45 +0100
+
 keeptalking (4.0.0-1) unstable; urgency=low
 
   * Properly set the italian translation on the policy file.
