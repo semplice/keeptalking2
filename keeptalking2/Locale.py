@@ -6,13 +6,51 @@
 # This file is part of the keeptalking package.
 #
 
+from gi.repository import Gio
+
 import os, shutil
-import keeptalking.core as core
+import keeptalking2.core as core
+
+BUS_NAME = "org.freedesktop.locale1"
 
 class Locale:
 	def __init__(self, target="/"):
 		
 		self.target = target
+
+		# Enter in the bus
+		self.bus_cancellable = Gio.Cancellable()
+		self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, self.bus_cancellable)
+		self.Locale = Gio.DBusProxy.new_sync(
+			self.bus,
+			0,
+			None,
+			BUS_NAME,
+			"/org/freedesktop/locale1",
+			BUS_NAME,
+			self.bus_cancellable
+		)
+		self.LocaleProperties = Gio.DBusProxy.new_sync(
+			self.bus,
+			0,
+			None,
+			BUS_NAME,
+			"/org/freedesktop/locale1",
+			"org.freedesktop.DBus.Properties",
+			self.bus_cancellable
+		) # Really we should create a new proxy to get the properties?!
+
+	@property
+	def default(self):
+		"""
+		Returns the default locale on the system.
+		"""
+		
+		for item in self.LocaleProperties.Get('(ss)', BUS_NAME, 'Locale'):
+			if item.startswith("LANG="):
+				return item.split("=")[-1]
+		
+		return None
 
 	@property
 	def default_offline(self):
@@ -144,6 +182,20 @@ class Locale:
 		return best
 	
 	def set(self, locale, generateonly=False):
+		"""
+		Sets specified locale in the system's configuration.
+		
+		Please note that generateonly is ignored and it's only there
+		for compatibility purposes.
+		"""
+		
+		self.Locale.SetLocale(
+			'(asb)',
+			["LANG=%s" % locale],
+			True # User interaction
+		)
+	
+	def set_offline(self, locale, generateonly=False):
 		""" Sets specified locale in the system's configuration. """
 		
 		if not generateonly:
