@@ -6,8 +6,12 @@
 # This file is part of the keeptalking package.
 #
 
+from gi.repository import Gio
+
 import fileinput, os, sys
-import keeptalking.core as core
+import keeptalking2.core as core
+
+BUS_NAME = "org.freedesktop.locale1"
 
 class Keyboard:
 	def __init__(self, target="/"):
@@ -20,6 +24,36 @@ class Keyboard:
 		else:
 			# Older Debian; Ubuntu
 			self.KEYBFILE = os.path.join(self.target, "etc/default/console-setup")
+		
+		# Enter in the bus
+		self.bus_cancellable = Gio.Cancellable()
+		self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, self.bus_cancellable)
+		self.Keyboard = Gio.DBusProxy.new_sync(
+			self.bus,
+			0,
+			None,
+			BUS_NAME,
+			"/org/freedesktop/locale1",
+			BUS_NAME,
+			self.bus_cancellable
+		)
+		self.KeyboardProperties = Gio.DBusProxy.new_sync(
+			self.bus,
+			0,
+			None,
+			BUS_NAME,
+			"/org/freedesktop/locale1",
+			"org.freedesktop.DBus.Properties",
+			self.bus_cancellable
+		) # Really we should create a new proxy to get the properties?!
+
+	@property
+	def default_layout(self):
+		"""
+		Returns the current keyboard layout.
+		"""
+		
+		return self.KeyboardProperties.Get('(ss)', BUS_NAME, 'X11Layout')
 
 	@property
 	def default_layout_offline(self):
@@ -39,6 +73,14 @@ class Keyboard:
 		return catched
 
 	@property
+	def default_model(self):
+		"""
+		Returns the current keyboard model.
+		"""
+		
+		return self.KeyboardProperties.Get('(ss)', BUS_NAME, 'X11Model')
+
+	@property
 	def default_model_offline(self):
 		""" Returns the current keyboard model. """
 		
@@ -56,6 +98,14 @@ class Keyboard:
 		return catched
 	
 	@property
+	def default_variant(self):
+		"""
+		Returns the current keyboard variant.
+		"""
+		
+		return self.KeyboardProperties.Get('(ss)', BUS_NAME, 'X11Variant')
+	
+	@property
 	def default_variant_offline(self):
 		""" Returns the current keyboard variant. """
 		
@@ -71,14 +121,26 @@ class Keyboard:
 						break
 		
 		return catched	
+	
+	@property
+	def default(self):
+		"""
+		Layout, model, variant, options: all together.
+		"""
 		
+		return "%(layout)s:%(model)s%(variant)s" % {
+				"layout": self.default_layout,
+				"model": self.default_model,
+				"variant": ":%s" % self.variant if self.default_variant else ""
+			}
+	
 	@property
 	def default_offline(self):
-		""" Layout, model, variant, options: all togheter. """
+		""" Layout, model, variant, options: all together. """
 		
-		layout = self.default_layout
-		model = self.default_model
-		variant = self.default_variant
+		layout = self.default_layout_offline
+		model = self.default_model_offline
+		variant = self.default_variant_offline
 		
 		show = []
 		show.append(layout)
@@ -195,6 +257,21 @@ class Keyboard:
 				return True
 		
 		return False
+	
+	def set(self, layout=None, model=None, variant=None):
+		"""
+		Sets the desired layout and model.
+		"""
+		
+		self.Keyboard.SetX11Keyboard(
+			'(ssssbb)',
+			layout if layout else self.default_layout,
+			model if model else self.default_model,
+			variant if variant else self.default_variant,
+			"", # options (not supported yet)
+			True, # convert
+			True # User interaction
+		)
 
 	def set_offline(self, layout=None, model=None, variant=None):
 		""" Sets the desired layout and model. """
