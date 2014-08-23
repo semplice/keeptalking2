@@ -6,10 +6,47 @@
 # This file is part of the keeptalking package.
 #
 
+from gi.repository import Gio
+
 import os, shutil
-import keeptalking.core as core
+import keeptalking2.core as core
+
+BUS_NAME = "org.freedesktop.timedate1"
 
 class TimeZone:
+	
+	def __init__(self):
+		
+		# Enter in the bus
+		self.bus_cancellable = Gio.Cancellable()
+		self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, self.bus_cancellable)
+		self.TimeZone = Gio.DBusProxy.new_sync(
+			self.bus,
+			0,
+			None,
+			BUS_NAME,
+			"/org/freedesktop/timedate1",
+			BUS_NAME,
+			self.bus_cancellable
+		)
+		self.TimeZoneProperties = Gio.DBusProxy.new_sync(
+			self.bus,
+			0,
+			None,
+			BUS_NAME,
+			"/org/freedesktop/timedate1",
+			"org.freedesktop.DBus.Properties",
+			self.bus_cancellable
+		) # Really we should create a new proxy to get the properties?!
+	
+	@property
+	def default(self):
+		"""
+		Returns the default timezone.
+		"""
+		
+		return self.TimeZoneProperties.Get('(ss)', BUS_NAME, 'Timezone')
+	
 	@property
 	def default_offline(self):
 		""" Returns the default timezone. """
@@ -56,7 +93,17 @@ class TimeZone:
 				if not line[0] in result: result[line[0]] = line[2]
 		
 		return result
+	
+	def set(self, tzone):
+		"""
+		Permanently set the selected timezone.
+		"""
 		
+		self.TimeZone.SetTimezone(
+			'(sb)',
+			tzone,
+			True # User interaction
+		)
 	
 	def set_offline(self, tzone):
 		""" Permanently set the selected timezone. """
