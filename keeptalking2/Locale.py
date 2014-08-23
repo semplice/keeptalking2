@@ -15,7 +15,7 @@ class Locale:
 		self.target = target
 
 	@property
-	def default(self):
+	def default_offline(self):
 		""" Returns the default locale on the system. """
 		
 		target = None

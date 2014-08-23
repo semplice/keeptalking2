@@ -11,7 +11,7 @@ import keeptalking.core as core
 
 class TimeZone:
 	@property
-	def default(self):
+	def default_offline(self):
 		""" Returns the default timezone. """
 		
 		with open("/etc/timezone") as f:
@@ -58,7 +58,7 @@ class TimeZone:
 		return result
 		
 	
-	def set(self, tzone):
+	def set_offline(self, tzone):
 		""" Permanently set the selected timezone. """
 		
 		if tzone.startswith("Other/"):

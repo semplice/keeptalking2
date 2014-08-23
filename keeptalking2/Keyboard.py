@@ -22,7 +22,7 @@ class Keyboard:
 			self.KEYBFILE = os.path.join(self.target, "etc/default/console-setup")
 
 	@property
-	def default_layout(self):
+	def default_layout_offline(self):
 		""" Returns the current keyboard layout. """
 		
 		catched = None
@@ -39,7 +39,7 @@ class Keyboard:
 		return catched
 
 	@property
-	def default_model(self):
+	def default_model_offline(self):
 		""" Returns the current keyboard model. """
 		
 		catched = None
@@ -56,7 +56,7 @@ class Keyboard:
 		return catched
 	
 	@property
-	def default_variant(self):
+	def default_variant_offline(self):
 		""" Returns the current keyboard variant. """
 		
 		catched = None
@@ -73,7 +73,7 @@ class Keyboard:
 		return catched	
 		
 	@property
-	def default(self):
+	def default_offline(self):
 		""" Layout, model, variant, options: all togheter. """
 		
 		layout = self.default_layout
@@ -196,7 +196,7 @@ class Keyboard:
 		
 		return False
 
-	def set(self, layout=None, model=None, variant=None):
+	def set_offline(self, layout=None, model=None, variant=None):
 		""" Sets the desired layout and model. """
 		
 		for line in fileinput.input(self.KEYBFILE,inplace=1):
