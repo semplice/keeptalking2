@@ -27,6 +27,7 @@ import os, shutil
 import keeptalking2.core as core
 
 BUS_NAME = "org.freedesktop.locale1"
+SERVICE_BUS_NAME = "org.semplicelinux.keeptalking2"
 
 class Locale:
 	"""
@@ -34,16 +35,29 @@ class Locale:
 	other supported ones.
 	"""
 	
-	def __init__(self, target="/"):
+	def __init__(self, target="/", no_dbus=False):
 		"""
 		Initialization.
 		"""
 		
 		self.target = target
+		self.no_dbus = no_dbus
 
+		if self.no_dbus:
+			return
+		
 		# Enter in the bus
 		self.bus_cancellable = Gio.Cancellable()
 		self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, self.bus_cancellable)
+		self.Service = Gio.DBusProxy.new_sync(
+			self.bus,
+			0,
+			None,
+			SERVICE_BUS_NAME,
+			"/org/semplicelinux/keeptalking2",
+			SERVICE_BUS_NAME,
+			self.bus_cancellable
+		)
 		self.Locale = Gio.DBusProxy.new_sync(
 			self.bus,
 			0,
@@ -68,6 +82,8 @@ class Locale:
 		"""
 		Returns the default locale on the system.
 		"""
+		
+		if self.no_dbus: return
 		
 		for item in self.LocaleProperties.Get('(ss)', BUS_NAME, 'Locale'):
 			if item.startswith("LANG="):
@@ -226,6 +242,14 @@ class Locale:
 		Please note that generateonly is ignored and it's only there
 		for compatibility purposes.
 		"""
+
+		if self.no_dbus: return
+
+		self.Service.GenerateLocales(
+			'(sb)',
+			locale,
+			True # User interaction
+		)
 		
 		self.Locale.SetLocale(
 			'(asb)',
