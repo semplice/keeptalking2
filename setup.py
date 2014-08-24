@@ -25,7 +25,7 @@
 from distutils.core import setup
 
 setup(name='keeptalking2',
-	version='6.20.0',
+	version='6.20.1',
 	description='Library to interface with internationalization features',
 	author='Eugenio Paolantonio',
 	author_email='me@medesimo.eu',

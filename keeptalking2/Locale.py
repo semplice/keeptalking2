@@ -149,7 +149,7 @@ class Locale:
 		for _file in os.listdir("/usr/share/i18n/locales/"):
 			if "translit" in _file or "iso14651_t1" in _file or "POSIX" in _file: continue
 						
-			with open(os.path.join("/usr/share/i18n/locales/", _file)) as f:
+			with open(os.path.join("/usr/share/i18n/locales/", _file), encoding="latin-1") as f:
 				language = False
 				territory = False
 				while language == False or territory == False:
