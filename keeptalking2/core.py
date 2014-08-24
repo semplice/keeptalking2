@@ -23,7 +23,7 @@
 
 import subprocess
 
-__version__ = 7.0.0
+__version__ = "7.0.0"
 
 # External program except:
 class CmdError(Exception):
