@@ -1,22 +1,88 @@
 # -*- coding: utf-8 -*-
 #
-# KeepTalking library -- Locale mdoule
-# Copyright (C) 2012 Semplice Team. All rights reserved.
+# keeptalking2 - library to interface with internationalization features
+# Copyright (C) 2012-2014  Eugenio "g7" Paolantonio
 #
-# This file is part of the keeptalking package.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
+# Authors:
+#    Eugenio "g7" Paolantonio <me@medesimo.eu>
+#
+
+from gi.repository import Gio
 
 import os, shutil
-import keeptalking.core as core
+import keeptalking2.core as core
+
+BUS_NAME = "org.freedesktop.locale1"
 
 class Locale:
+	"""
+	The Locale class is an interface to the current set locale and the
+	other supported ones.
+	"""
+	
 	def __init__(self, target="/"):
+		"""
+		Initialization.
+		"""
 		
 		self.target = target
 
+		# Enter in the bus
+		self.bus_cancellable = Gio.Cancellable()
+		self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, self.bus_cancellable)
+		self.Locale = Gio.DBusProxy.new_sync(
+			self.bus,
+			0,
+			None,
+			BUS_NAME,
+			"/org/freedesktop/locale1",
+			BUS_NAME,
+			self.bus_cancellable
+		)
+		self.LocaleProperties = Gio.DBusProxy.new_sync(
+			self.bus,
+			0,
+			None,
+			BUS_NAME,
+			"/org/freedesktop/locale1",
+			"org.freedesktop.DBus.Properties",
+			self.bus_cancellable
+		) # Really we should create a new proxy to get the properties?!
+
 	@property
 	def default(self):
-		""" Returns the default locale on the system. """
+		"""
+		Returns the default locale on the system.
+		"""
+		
+		for item in self.LocaleProperties.Get('(ss)', BUS_NAME, 'Locale'):
+			if item.startswith("LANG="):
+				return item.split("=")[-1]
+		
+		return None
+
+	@property
+	def default_offline(self):
+		"""
+		Returns the default locale on the system.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
 		target = None
 		
@@ -30,7 +96,9 @@ class Locale:
 
 	@property
 	def supported(self):
-		""" Returns a tuple which contains supported locales. """
+		"""
+		Returns a tuple which contains supported locales.
+		"""
 		
 		final = []
 		
@@ -43,7 +111,9 @@ class Locale:
 	
 	@property
 	def codepages(self):
-		""" Returns a dictionary which contains, for every supported locale, its own codepage. """
+		"""
+		Returns a dictionary which contains, for every supported locale, its own codepage.
+		"""
 		
 		codepages = {}
 		
@@ -57,7 +127,9 @@ class Locale:
 	
 	@property
 	def is_savingspace(self):
-		""" Returns True if the 'Save space' function is enabled, False if not. """
+		"""
+		Returns True if the 'Save space' function is enabled, False if not.
+		"""
 		
 		if os.path.exists(os.path.join(self.target, "etc/dpkg/dpkg.cfg.d/keeptalking")):
 			return True
@@ -65,7 +137,9 @@ class Locale:
 			return False
 
 	def human_form(self, all=True):
-		""" Returns a dictionary which contains, for every supported locale, its "human" form. """
+		"""
+		Returns a dictionary which contains, for every supported locale, its "human" form.
+		"""
 		
 		working = {}
 		working_reverse = {}
@@ -126,7 +200,9 @@ class Locale:
 		return final
 	
 	def get_best_locale(self, locale):
-		""" Returns the best locale (the first one) in supported, which should match (in part or fully) 'locale'. """
+		"""
+		Returns the best locale (the first one) in supported, which should match (in part or fully) 'locale'.
+		"""
 		
 		if len(locale) == 2:
 			# If we have only the two-letters code, we should make something like ll_LL.
@@ -144,7 +220,26 @@ class Locale:
 		return best
 	
 	def set(self, locale, generateonly=False):
-		""" Sets specified locale in the system's configuration. """
+		"""
+		Sets the specified locale in the system's configuration.
+		
+		Please note that generateonly is ignored and it's only there
+		for compatibility purposes.
+		"""
+		
+		self.Locale.SetLocale(
+			'(asb)',
+			["LANG=%s" % locale],
+			True # User interaction
+		)
+	
+	def set_offline(self, locale, generateonly=False):
+		"""
+		Sets specified locale in the system's configuration.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
 		if not generateonly:
 			with open(os.path.join(self.target, "etc/default/locale"),"w") as f:
@@ -170,7 +265,9 @@ class Locale:
 			core.sexec("/usr/sbin/locale-gen")
 	
 	def savespace_detect(self, locale):
-		""" Internal. """
+		"""
+		Internal.
+		"""
 
 		manlang = locale.split(".")[0].split("@")[0].split("_")[0].lower()
 		
@@ -185,7 +282,9 @@ class Locale:
 		return manlang, lang, finaldir
 
 	def savespace_enable(self, locale):
-		""" Enables savespace for the language of the given locale. """
+		"""
+		Enables savespace for the language of the given locale.
+		"""
 				
 		manlang, lang, finaldir = self.savespace_detect(locale)
 				
@@ -204,7 +303,9 @@ path-include=/usr/share/man/%(manlang)s*/*
 """ % {"lang":lang, "manlang":manlang, "finaldir": finaldir})
 
 	def savespace_disable(self):
-		""" Disables savespace (if enabled) """
+		"""
+		Disables savespace (if enabled)
+		"""
 		
 		rules = os.path.join(self.target, "etc/dpkg/dpkg.cfg.d/keeptalking")
 		if not os.path.exists(rules): return
@@ -212,7 +313,9 @@ path-include=/usr/share/man/%(manlang)s*/*
 		os.remove(rules)
 	
 	def savespace_purge(self, locale):
-		""" Purges foreign locales. """
+		"""
+		Purges foreign locales.
+		"""
 
 		manlang, lang, finaldir = self.savespace_detect(locale)
 		
