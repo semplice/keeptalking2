@@ -31,9 +31,6 @@ setup(name='keeptalking2',
 	author_email='me@medesimo.eu',
 	url='http://github.com/semplice/keeptalking2',
 	# package_dir={'bin':''},
-	packages=[
-		"keeptalking2",
-		"keeptalking2.core",
-      ],
+	packages=["keeptalking2",],
 	requires=['gi.repository.Gio', 'time', 'fileinput', 'os', 'sys', 'shutil'],
 )
