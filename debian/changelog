@@ -1,3 +1,9 @@
+keeptalking2 (6.20.1-1) unstable; urgency=medium
+
+  * Locale: human_form(): open locales files using latin-1 encoding.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sun, 24 Aug 2014 16:13:12 +0200
+
 keeptalking2 (6.20.0-2) unstable; urgency=medium
 
   * debian/rules: python -> python3
