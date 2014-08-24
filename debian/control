@@ -1,33 +1,22 @@
-Source: keeptalking
+Source: keeptalking2
 Section: admin
 Priority: optional
 Maintainer: Eugenio Paolantonio (g7) <me@medesimo.eu>
-Build-Depends: debhelper (>= 7), python-all, python-support
-X-Python-Version: >= 2.6
-Standards-Version: 3.9.3.1
-Homepage: http://launchpad.net/keeptalking
+Build-Depends: dh-python, python3-all (>= 3.1.2-7~), debhelper (>= 8.0.0)
+X-Python3-Version: >= 3.2
+Standards-Version: 3.9.5
+Homepage: https://github.com/semplice/keeptalking2
+Vcs-Git: git://github.com/semplice/keeptalking2.git
+Vcs-Browser: https://github.com/semplice/keeptalking2
 
-Package: keeptalking
+Package: python3-keeptalking2
 Architecture: all
-Depends: ${python:Depends}, python-keeptalking, python-t9n, python-gi, gir1.2-gtk-3.0, screen
-Description: Internationalization & Localization setting chooser -- Main executables
- Keeptalking is a Python-written application that lets the user
- choose the desidered Locale, Keyboard settings and Timezone.
- .
- This package contains the main keeptalking executables (GTK
- and command-line frontends)
-
-Package: python-keeptalking
-Architecture: all
-Depends: ${python:Depends}, coreutils, console-common, python-t9n
-Description: Internationalization & Localization setting chooser -- Libraries
- Keeptalking is a Python-written application that lets the user
- choose the desidered Locale, Keyboard settings and Timezone.
- .
- This package contains the public keeptalking libraries.
- 
-Package: python-t9n
-Architecture: all
-Depends: ${python:Depends}
-Description: A very simple python translation library
- t9n is a simple translation library 
+Depends: ${misc:Depends}, ${python3:Depends}, python3-gi, gir1.2-glib-2.0,
+ ${python:Depends}, coreutils, console-common
+Recommends: systemd | systemd-shim
+Description: Library to interface with internationalization features
+ Keeptalking2 is a python library to interface with the internationalization
+ features of the distribution. 
+ . 
+ It provides a public API that can be used to set/get the Keyboard layout,
+ locale and timezone, as well as get a list of the supported ones.
