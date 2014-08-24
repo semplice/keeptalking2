@@ -25,7 +25,7 @@
 from distutils.core import setup
 
 setup(name='keeptalking2',
-	version='6.21.0',
+	version='6.21.1',
 	description='Library to interface with internationalization features',
 	author='Eugenio Paolantonio',
 	author_email='me@medesimo.eu',
@@ -38,5 +38,5 @@ setup(name='keeptalking2',
 	],
 	# package_dir={'bin':''},
 	packages=["keeptalking2",],
-	requires=['dbus', 'gi.repository.GLib', 'gi.repository.Gio', 'time', 'fileinput', 'os', 'sys', 'shutil'],
+	requires=['dbus', 'gi.repository.GLib', 'gi.repository.Polkit', 'gi.repository.Gio', 'time', 'fileinput', 'os', 'sys', 'shutil'],
 )

@@ -309,6 +309,22 @@ class Locale:
 		"""
 		Enables savespace for the language of the given locale.
 		"""
+		
+		if self.no_dbus: return
+		
+		self.Service.EnableSavespace(
+			'(sb)',
+			locale,
+			True # User interaction
+		)
+
+	def savespace_enable_offline(self, locale):
+		"""
+		Enables savespace for the language of the given locale.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 				
 		manlang, lang, finaldir = self.savespace_detect(locale)
 				
@@ -330,6 +346,21 @@ path-include=/usr/share/man/%(manlang)s*/*
 		"""
 		Disables savespace (if enabled)
 		"""
+
+		if self.no_dbus: return
+		
+		self.Service.DisableSavespace(
+			'(b)',
+			True # User interaction
+		)
+
+	def savespace_disable_offline(self):
+		"""
+		Disables savespace (if enabled)
+
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
 		rules = os.path.join(self.target, "etc/dpkg/dpkg.cfg.d/keeptalking")
 		if not os.path.exists(rules): return
@@ -339,6 +370,22 @@ path-include=/usr/share/man/%(manlang)s*/*
 	def savespace_purge(self, locale):
 		"""
 		Purges foreign locales.
+		"""
+
+		if self.no_dbus: return
+		
+		self.Service.PurgeSavespace(
+			'(sb)',
+			locale,
+			True # User interaction
+		)
+	
+	def savespace_purge_offline(self, locale):
+		"""
+		Purges foreign locales.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
 		"""
 
 		manlang, lang, finaldir = self.savespace_detect(locale)

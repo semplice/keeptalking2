@@ -150,6 +150,60 @@ class Service(dbus.service.Object):
 		self.Locale.set_offline(locale, generateonly=True)
 		self.add_timeout()
 
+	@dbus.service.method(
+		"org.semplicelinux.keeptalking2",
+		in_signature="sb",
+		sender_keyword="sender",
+		connection_keyword="connection"
+	)
+	def EnableSavespace(self, locale, user_interaction, sender, connection):
+		"""
+		This method enables the savespace feature.
+		"""
+		
+		if not self.is_authorized(sender, connection, "org.semplicelinux.keeptalking2.change-savespace", user_interaction):
+			raise Exception("E: Not authorized")
+				
+		self.remove_timeout()
+		self.Locale.savespace_enable_offline(locale)
+		self.add_timeout()
+
+	@dbus.service.method(
+		"org.semplicelinux.keeptalking2",
+		in_signature="b",
+		sender_keyword="sender",
+		connection_keyword="connection"
+	)
+	def DisableSavespace(self, user_interaction, sender, connection):
+		"""
+		This method disables the savespace feature.
+		"""
+		
+		if not self.is_authorized(sender, connection, "org.semplicelinux.keeptalking2.change-savespace", user_interaction):
+			raise Exception("E: Not authorized")
+				
+		self.remove_timeout()
+		self.Locale.savespace_disable_offline()
+		self.add_timeout()
+
+	@dbus.service.method(
+		"org.semplicelinux.keeptalking2",
+		in_signature="sb",
+		sender_keyword="sender",
+		connection_keyword="connection"
+	)
+	def PurgeSavespace(self, locale, user_interaction, sender, connection):
+		"""
+		This method purges locale files not needed anymore.
+		"""
+		
+		if not self.is_authorized(sender, connection, "org.semplicelinux.keeptalking2.change-savespace", user_interaction):
+			raise Exception("E: Not authorized")
+				
+		self.remove_timeout()
+		self.Locale.savespace_purge_offline(locale)
+		self.add_timeout()
+
 if __name__ == "__main__":	
 	DBusGMainLoop(set_as_default=True)
 	service = Service()
