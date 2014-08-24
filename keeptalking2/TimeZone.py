@@ -14,8 +14,15 @@ import keeptalking2.core as core
 BUS_NAME = "org.freedesktop.timedate1"
 
 class TimeZone:
+	"""
+	The TimeZone class is an interface to the current and supported
+	Timezones.
+	"""
 	
 	def __init__(self):
+		"""
+		Initialization.
+		"""
 		
 		# Enter in the bus
 		self.bus_cancellable = Gio.Cancellable()
@@ -49,7 +56,12 @@ class TimeZone:
 	
 	@property
 	def default_offline(self):
-		""" Returns the default timezone. """
+		"""
+		Returns the default timezone.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
 		with open("/etc/timezone") as f:
 			tzone = f.readline().replace("\n","")
@@ -58,7 +70,9 @@ class TimeZone:
 
 	@property		
 	def supported(self):
-		""" This will list all available timezones, directly via /usr/share/zoneinfo. """
+		"""
+		This will list all available timezones, directly via /usr/share/zoneinfo.
+		"""
 
 		supported = {}
 		
@@ -81,8 +95,10 @@ class TimeZone:
 		return supported
 	
 	def associate_timezones_to_countries(self):
-		""" Associates know timezones in supported to their country.
-		Returns the associated dictionary. """
+		"""
+		Associates know timezones in supported to their country.
+		Returns the associated dictionary.
+		"""
 		
 		result = {}
 		with open("/usr/share/zoneinfo/zone.tab", "r") as f:
@@ -106,7 +122,12 @@ class TimeZone:
 		)
 	
 	def set_offline(self, tzone):
-		""" Permanently set the selected timezone. """
+		"""
+		Permanently set the selected timezone.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
 		if tzone.startswith("Other/"):
 			tzone.replace("Other/","")

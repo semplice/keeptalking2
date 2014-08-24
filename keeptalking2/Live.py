@@ -9,9 +9,22 @@
 import os
 
 class Live:
+	"""
+	The Live class is an interface to Semplice Live's states, and can
+	be used to set-up the live-mode after language selection.
+	"""
+	
 	@property
 	def is_live(self):
-		""" Checks if we are on the live environment. """
+		"""
+		Returns True if the system is in live mode, False if not.
+		
+		Note that Live mode is only with /etc/semplice-live-mode == 'yeahh',
+		other states like 'nolock' will make this method return False.
+		
+		If you need to check for all live-mode states, simply test for
+		/etc/semplice-live-mode.
+		"""
 		
 		#return True
 		
@@ -28,21 +41,27 @@ class Live:
 		return LIVE
 	
 	def set(self, mode="nolock"):
+		"""
+		Sets the specified live-mode.
+		"""
+		
 		# Overwrite /etc/semplice-live-mode
 		with open("/etc/semplice-live-mode","w") as f:
 			f.write(mode + "\n")
 	
 	@property
 	def skip_live(self):
-		""" If language AND keyboard layout are specified from command line, return True. Otherwise, return False. """
+		"""
+		Returns True if the language selection can be skipped (i.e when
+		the locale and keyboard layout have been specified in the cmdline),
+		False if not.
+		"""
 		
 		keyb = False
 		lang = False
 		
-		cmdline = open("/proc/cmdline")
-		line = cmdline.readline()
-		line = line.strip("\n")
-		cmdline.close()
+		with open("/proc/cmdline") as cmdline:
+			line = cmdline.readline().strip("\n")
 		
 		# Split line
 		line = line.split(" ")

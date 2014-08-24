@@ -14,7 +14,15 @@ import keeptalking2.core as core
 BUS_NAME = "org.freedesktop.locale1"
 
 class Keyboard:
+	"""
+	The Keyboard class is an interface to the current and supported Keyboard
+	layouts, models and variants.
+	"""
+	
 	def __init__(self, target="/"):
+		"""
+		Initialization.
+		"""
 		
 		self.target = target
 		
@@ -57,7 +65,12 @@ class Keyboard:
 
 	@property
 	def default_layout_offline(self):
-		""" Returns the current keyboard layout. """
+		"""
+		Returns the current keyboard layout.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
 		catched = None
 		
@@ -82,7 +95,12 @@ class Keyboard:
 
 	@property
 	def default_model_offline(self):
-		""" Returns the current keyboard model. """
+		"""
+		Returns the current keyboard model.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
 		catched = None
 		
@@ -107,7 +125,12 @@ class Keyboard:
 	
 	@property
 	def default_variant_offline(self):
-		""" Returns the current keyboard variant. """
+		"""
+		Returns the current keyboard variant.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
 		catched = None
 		
@@ -131,29 +154,29 @@ class Keyboard:
 		return "%(layout)s:%(model)s%(variant)s" % {
 				"layout": self.default_layout,
 				"model": self.default_model,
-				"variant": ":%s" % self.variant if self.default_variant else ""
+				"variant": ":%s" % self.default_variant if self.default_variant else ""
 			}
 	
 	@property
 	def default_offline(self):
-		""" Layout, model, variant, options: all together. """
+		"""
+		Layout, model, variant, options: all together.
 		
-		layout = self.default_layout_offline
-		model = self.default_model_offline
-		variant = self.default_variant_offline
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
-		show = []
-		show.append(layout)
-		show.append(model)
-		
-		if variant:
-			show.append(variant)
-		
-		return ":".join(show)
+		return "%(layout)s:%(model)s%(variant)s" % {
+				"layout": self.default_layout_offline,
+				"model": self.default_model_offline,
+				"variant": ":%s" % self.default_variant_offline if self.default_variant_offline else ""
+			}
 
 	@property
 	def supported_walking(self):
-		""" Returns a dictionary with supported keymaps. """
+		"""
+		Returns a dictionary with supported keymaps.
+		"""
 		
 		supported = {}
 		
@@ -173,7 +196,9 @@ class Keyboard:
 		return supported
 	
 	def supported(self):
-		""" Returns a dictionary with supported models, layout (with variants). """
+		"""
+		Returns a dictionary with supported models, layout (with variants).
+		"""
 		
 		models = {}
 		layouts = {}
@@ -233,7 +258,9 @@ class Keyboard:
 		return models, layouts
 	
 	def supported_variants(self, layout):
-		""" Returns a tuple of available variants for layout. """
+		"""
+		Returns a tuple of available variants for layout.
+		"""
 		
 		available = []
 		
@@ -250,7 +277,9 @@ class Keyboard:
 		return tuple(available)
 	
 	def is_supported(self, layout):
-		""" Returns True if layout is supported, False if not. """
+		"""
+		Returns True if the layout is supported, False if not.
+		"""
 		
 		for typ, lst in self.supported.items():
 			if layout in lst:
@@ -274,7 +303,12 @@ class Keyboard:
 		)
 
 	def set_offline(self, layout=None, model=None, variant=None):
-		""" Sets the desired layout and model. """
+		"""
+		Sets the desired layout and model.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
 		for line in fileinput.input(self.KEYBFILE,inplace=1):
 			# WARNING: Ugly-ness excess in this for
