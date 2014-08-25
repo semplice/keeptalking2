@@ -308,9 +308,10 @@ class Keyboard:
 		Returns True if the layout is supported, False if not.
 		"""
 		
-		for typ, lst in self.supported.items():
-			if layout in lst:
-				return True
+		for set_ in keyboard.supported():
+			for typ, lst in set_.items():
+				if layout in lst:
+					return True
 		
 		return False
 	
