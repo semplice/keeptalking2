@@ -28,7 +28,11 @@ For example,
 	print(kb.default_offline) # Looks at /etc/default/keyboard, like the legacy keeptalking
 
 Currently keeptalking2 does **NOT** check for the existence of the DBus services,
-and thus can't transparently fallback to the offline variants.
+and thus can't transparently fallback to the offline variants.  
+However, it's possible to instantiate the `Keyboard()`, `Locale()` and `TimeZone()` classes with the
+`no_dbus` keyword.  
+If True, keeptalking2 will not connect to dbus and thus the method calls will automatically fallback
+to the offline variants.
 
 Please note that for techinical reasons it's not possible to change the internationalization
 settings of another system using the "online" methods.

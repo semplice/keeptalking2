@@ -34,12 +34,13 @@ class Keyboard:
 	layouts, models and variants.
 	"""
 	
-	def __init__(self, target="/"):
+	def __init__(self, target="/", no_dbus=False):
 		"""
 		Initialization.
 		"""
 		
 		self.target = target
+		self.no_dbus = no_dbus
 		
 		if os.path.exists(os.path.join(self.target, "etc/default/keyboard")):
 			# Debian
@@ -47,6 +48,9 @@ class Keyboard:
 		else:
 			# Older Debian; Ubuntu
 			self.KEYBFILE = os.path.join(self.target, "etc/default/console-setup")
+		
+		if self.no_dbus:
+			return
 		
 		# Enter in the bus
 		self.bus_cancellable = Gio.Cancellable()
@@ -75,6 +79,8 @@ class Keyboard:
 		"""
 		Returns the current keyboard layout.
 		"""
+		
+		if self.no_dbus: return self.default_layout_offline
 		
 		return self.KeyboardProperties.Get('(ss)', BUS_NAME, 'X11Layout')
 
@@ -106,6 +112,8 @@ class Keyboard:
 		Returns the current keyboard model.
 		"""
 		
+		if self.no_dbus: return self.default_model_offline
+		
 		return self.KeyboardProperties.Get('(ss)', BUS_NAME, 'X11Model')
 
 	@property
@@ -136,6 +144,8 @@ class Keyboard:
 		Returns the current keyboard variant.
 		"""
 		
+		if self.no_dbus: return self.default_variant_offline
+		
 		return self.KeyboardProperties.Get('(ss)', BUS_NAME, 'X11Variant')
 	
 	@property
@@ -165,6 +175,8 @@ class Keyboard:
 		"""
 		Layout, model, variant, options: all together.
 		"""
+		
+		if self.no_dbus: return self.default_offline
 		
 		return "%(layout)s:%(model)s%(variant)s" % {
 				"layout": self.default_layout,
@@ -307,11 +319,13 @@ class Keyboard:
 		Sets the desired layout and model.
 		"""
 		
+		if self.no_dbus: return self.set_offline(layout=layout, model=model, variant=variant)
+		
 		self.Keyboard.SetX11Keyboard(
 			'(ssssbb)',
 			layout if layout else self.default_layout,
-			model if model else self.default_model,
-			variant if variant else self.default_variant,
+			model if model != None else self.default_model,
+			variant if variant != None else self.default_variant,
 			"", # options (not supported yet)
 			True, # convert
 			True # User interaction

@@ -83,7 +83,7 @@ class Locale:
 		Returns the default locale on the system.
 		"""
 		
-		if self.no_dbus: return
+		if self.no_dbus: return self.default_offline
 		
 		for item in self.LocaleProperties.Get('(ss)', BUS_NAME, 'Locale'):
 			if item.startswith("LANG="):
@@ -243,7 +243,7 @@ class Locale:
 		for compatibility purposes.
 		"""
 
-		if self.no_dbus: return
+		if self.no_dbus: return self.set_offline(locale, generateonly=generateonly)
 
 		self.Service.GenerateLocales(
 			'(sb)',
@@ -310,7 +310,7 @@ class Locale:
 		Enables savespace for the language of the given locale.
 		"""
 		
-		if self.no_dbus: return
+		if self.no_dbus: return self.savespace_enable_offline()
 		
 		self.Service.EnableSavespace(
 			'(sb)',
@@ -347,7 +347,7 @@ path-include=/usr/share/man/%(manlang)s*/*
 		Disables savespace (if enabled)
 		"""
 
-		if self.no_dbus: return
+		if self.no_dbus: return self.savespace_disable_offline()
 		
 		self.Service.DisableSavespace(
 			'(b)',
@@ -372,7 +372,7 @@ path-include=/usr/share/man/%(manlang)s*/*
 		Purges foreign locales.
 		"""
 
-		if self.no_dbus: return
+		if self.no_dbus: return self.savespace_purge_offline()
 		
 		self.Service.PurgeSavespace(
 			'(sb)',

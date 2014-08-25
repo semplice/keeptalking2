@@ -33,10 +33,15 @@ class TimeZone:
 	Timezones.
 	"""
 	
-	def __init__(self):
+	def __init__(self, no_dbus=False):
 		"""
 		Initialization.
 		"""
+		
+		self.no_dbus = no_dbus
+		
+		if self.no_dbus:
+			return
 		
 		# Enter in the bus
 		self.bus_cancellable = Gio.Cancellable()
@@ -65,6 +70,8 @@ class TimeZone:
 		"""
 		Returns the default timezone.
 		"""
+		
+		if self.no_dbus: return
 		
 		return self.TimeZoneProperties.Get('(ss)', BUS_NAME, 'Timezone')
 	
@@ -128,6 +135,8 @@ class TimeZone:
 		"""
 		Permanently set the selected timezone.
 		"""
+		
+		if self.no_dbus: return
 		
 		self.TimeZone.SetTimezone(
 			'(sb)',
