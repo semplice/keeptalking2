@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.semplicelinux.keeptalking2
+Exec=/usr/bin/keeptalking2-service.py
+User=root

@@ -27,6 +27,7 @@ import os, shutil
 import keeptalking2.core as core
 
 BUS_NAME = "org.freedesktop.locale1"
+SERVICE_BUS_NAME = "org.semplicelinux.keeptalking2"
 
 class Locale:
 	"""
@@ -34,16 +35,29 @@ class Locale:
 	other supported ones.
 	"""
 	
-	def __init__(self, target="/"):
+	def __init__(self, target="/", no_dbus=False):
 		"""
 		Initialization.
 		"""
 		
 		self.target = target
+		self.no_dbus = no_dbus
 
+		if self.no_dbus:
+			return
+		
 		# Enter in the bus
 		self.bus_cancellable = Gio.Cancellable()
 		self.bus = Gio.bus_get_sync(Gio.BusType.SYSTEM, self.bus_cancellable)
+		self.Service = Gio.DBusProxy.new_sync(
+			self.bus,
+			0,
+			None,
+			SERVICE_BUS_NAME,
+			"/org/semplicelinux/keeptalking2",
+			SERVICE_BUS_NAME,
+			self.bus_cancellable
+		)
 		self.Locale = Gio.DBusProxy.new_sync(
 			self.bus,
 			0,
@@ -68,6 +82,8 @@ class Locale:
 		"""
 		Returns the default locale on the system.
 		"""
+		
+		if self.no_dbus: return self.default_offline
 		
 		for item in self.LocaleProperties.Get('(ss)', BUS_NAME, 'Locale'):
 			if item.startswith("LANG="):
@@ -226,6 +242,14 @@ class Locale:
 		Please note that generateonly is ignored and it's only there
 		for compatibility purposes.
 		"""
+
+		if self.no_dbus: return self.set_offline(locale, generateonly=generateonly)
+
+		self.Service.GenerateLocales(
+			'(sb)',
+			locale,
+			True # User interaction
+		)
 		
 		self.Locale.SetLocale(
 			'(asb)',
@@ -246,15 +270,21 @@ class Locale:
 				f.write("LANG=\"%s\"\n" % (locale))
 		
 		for _file in (os.path.join(self.target, "etc/locale.gen"), os.path.join(self.target, "etc/locale-gen.conf")):
+			
+			# FIXME: a+ doesn't seem to work anymore o.O
+			# No time to look at this for now, but we should avoid
+			# opening two times the same file.
+			
 			append = True
-			with open(_file,"a+") as f:
-				for line in f.readlines():
+			with open(_file) as f:
+				for line in f:
 					line = line.split(" ")[0]
 					if locale in line:
 						# We found the locale: locale-gen knows of it. Then we do not need to append it.
 						append = False
 						break
-				
+			
+			with open(_file, "a") as f:
 				if append:
 					f.write("%s %s\n" % (locale, self.codepages[locale]))
 		
@@ -285,6 +315,22 @@ class Locale:
 		"""
 		Enables savespace for the language of the given locale.
 		"""
+		
+		if self.no_dbus: return self.savespace_enable_offline()
+		
+		self.Service.EnableSavespace(
+			'(sb)',
+			locale,
+			True # User interaction
+		)
+
+	def savespace_enable_offline(self, locale):
+		"""
+		Enables savespace for the language of the given locale.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 				
 		manlang, lang, finaldir = self.savespace_detect(locale)
 				
@@ -306,6 +352,21 @@ path-include=/usr/share/man/%(manlang)s*/*
 		"""
 		Disables savespace (if enabled)
 		"""
+
+		if self.no_dbus: return self.savespace_disable_offline()
+		
+		self.Service.DisableSavespace(
+			'(b)',
+			True # User interaction
+		)
+
+	def savespace_disable_offline(self):
+		"""
+		Disables savespace (if enabled)
+
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
+		"""
 		
 		rules = os.path.join(self.target, "etc/dpkg/dpkg.cfg.d/keeptalking")
 		if not os.path.exists(rules): return
@@ -315,6 +376,22 @@ path-include=/usr/share/man/%(manlang)s*/*
 	def savespace_purge(self, locale):
 		"""
 		Purges foreign locales.
+		"""
+
+		if self.no_dbus: return self.savespace_purge_offline()
+		
+		self.Service.PurgeSavespace(
+			'(sb)',
+			locale,
+			True # User interaction
+		)
+	
+	def savespace_purge_offline(self, locale):
+		"""
+		Purges foreign locales.
+		
+		This is an 'offline' method, so the target will be respected
+		and DBus will not be used.
 		"""
 
 		manlang, lang, finaldir = self.savespace_detect(locale)

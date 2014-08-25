@@ -25,12 +25,18 @@
 from distutils.core import setup
 
 setup(name='keeptalking2',
-	version='6.20.1',
+	version='6.21.2',
 	description='Library to interface with internationalization features',
 	author='Eugenio Paolantonio',
 	author_email='me@medesimo.eu',
 	url='http://github.com/semplice/keeptalking2',
+	scripts=["service/keeptalking2-service.py"],
+	data_files=[
+		("/etc/dbus-1/system.d", ["service/org.semplicelinux.keeptalking2.conf"]),
+		("/usr/share/dbus-1/system-services", ["service/org.semplicelinux.keeptalking2.service"]),
+		("/usr/share/polkit-1/actions", ["service/org.semplicelinux.keeptalking2.policy"])
+	],
 	# package_dir={'bin':''},
 	packages=["keeptalking2",],
-	requires=['gi.repository.Gio', 'time', 'fileinput', 'os', 'sys', 'shutil'],
+	requires=['dbus', 'gi.repository.GLib', 'gi.repository.Polkit', 'gi.repository.Gio', 'time', 'fileinput', 'os', 'sys', 'shutil'],
 )
