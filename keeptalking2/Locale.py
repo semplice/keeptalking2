@@ -270,15 +270,21 @@ class Locale:
 				f.write("LANG=\"%s\"\n" % (locale))
 		
 		for _file in (os.path.join(self.target, "etc/locale.gen"), os.path.join(self.target, "etc/locale-gen.conf")):
+			
+			# FIXME: a+ doesn't seem to work anymore o.O
+			# No time to look at this for now, but we should avoid
+			# opening two times the same file.
+			
 			append = True
-			with open(_file,"a+") as f:
-				for line in f.readlines():
+			with open(_file) as f:
+				for line in f:
 					line = line.split(" ")[0]
 					if locale in line:
 						# We found the locale: locale-gen knows of it. Then we do not need to append it.
 						append = False
 						break
-				
+			
+			with open(_file, "a") as f:
 				if append:
 					f.write("%s %s\n" % (locale, self.codepages[locale]))
 		
