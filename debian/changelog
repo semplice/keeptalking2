@@ -1,3 +1,13 @@
+keeptalking2 (6.20.2-1) unstable; urgency=medium
+
+  * Added polkit-authorized DBus service to fix localed's nonsense..
+  * Added no_dbus support on every class and transparently fallback to _offline methods if it's True.
+  * Locale: fix locale.gen appending.
+  * Keyboard: fix is_supported().
+  * Depend on python3-dbus and gir1.2-polkit-1.0.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Mon, 25 Aug 2014 22:26:29 +0200
+
 keeptalking2 (6.20.1-1) unstable; urgency=medium
 
   * Locale: human_form(): open locales files using latin-1 encoding.
