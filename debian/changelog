@@ -1,3 +1,9 @@
+keeptalking2 (6.20.3-1) unstable; urgency=medium
+
+  * Keyboard: fix typo.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Mon, 25 Aug 2014 22:52:19 +0200
+
 keeptalking2 (6.20.2-1) unstable; urgency=medium
 
   * Added polkit-authorized DBus service to fix localed's nonsense..
