@@ -276,13 +276,14 @@ class Locale:
 			# opening two times the same file.
 			
 			append = True
-			with open(_file) as f:
-				for line in f:
-					line = line.split(" ")[0]
-					if locale in line:
-						# We found the locale: locale-gen knows of it. Then we do not need to append it.
-						append = False
-						break
+			if os.path.exists(_file):
+				with open(_file) as f:
+					for line in f:
+						line = line.split(" ")[0]
+						if locale in line:
+							# We found the locale: locale-gen knows of it. Then we do not need to append it.
+							append = False
+							break
 			
 			with open(_file, "a") as f:
 				if append:

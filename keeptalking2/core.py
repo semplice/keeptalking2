@@ -23,6 +23,8 @@
 
 import subprocess
 
+import os
+
 __version__ = "7.0.0"
 
 # External program except:
@@ -42,7 +44,7 @@ class UserError(Exception):
 class execute:
 	""" The execute class is a convenient class implemented to easily launch and control an external process. """
 	
-	def __init__(self, command, shell=True, custom_log=open("/tmp/keeptalking.log", "w")):
+	def __init__(self, command, shell=True, custom_log=None):
 		self.command = command
 		self.shell = shell
 		self.custom_log = custom_log
@@ -58,7 +60,7 @@ class execute:
 		else:
 			proc = self.command
 		
-		self.process = subprocess.Popen(proc, shell=self.shell, stdout=self.custom_log, stderr=self.custom_log)
+		self.process = subprocess.Popen(proc, shell=self.shell)
 		self.pid = self.process.pid
 		
 		# Now do whatever you want...
