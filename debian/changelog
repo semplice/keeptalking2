@@ -1,3 +1,12 @@
+keeptalking2 (6.20.4-1) unstable; urgency=medium
+
+  * core: execute(): removed custom_log support
+    (keyword remains to avoid API breakages)
+  * Locale: set_offline(): check for the existence of the
+    locale.gen files before reading them
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Tue, 26 Aug 2014 15:56:28 +0200
+
 keeptalking2 (6.20.3-1) unstable; urgency=medium
 
   * Keyboard: fix typo.
