@@ -14,7 +14,17 @@
                         <allow_inactive>auth_admin_keep</allow_inactive>
                         <allow_active>auth_admin_keep</allow_active>
                 </defaults>
-                <annotate key="org.freedesktop.policykit.imply">org.freedesktop.locale1.set-locale org.semplicelinux.keeptalking2.generate-locales org.semplicelinux.keeptalking2.change-savespace</annotate>
+                <annotate key="org.freedesktop.policykit.imply">org.freedesktop.locale1.set-locale org.semplicelinux.keeptalking2.create-stamp org.semplicelinux.keeptalking2.generate-locales org.semplicelinux.keeptalking2.change-savespace</annotate>
+        </action>
+
+        <action id="org.semplicelinux.keeptalking2.create-stamp">
+                <description>Create locale changed stamp</description>
+                <message>Authentication is required to create the locale changed stamp.</message>
+                <defaults>
+                        <allow_any>auth_admin_keep</allow_any>
+                        <allow_inactive>auth_admin_keep</allow_inactive>
+                        <allow_active>auth_admin_keep</allow_active>
+                </defaults>
         </action>
 
         <action id="org.semplicelinux.keeptalking2.generate-locales">

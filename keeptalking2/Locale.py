@@ -23,6 +23,8 @@
 
 from gi.repository import Gio
 
+import pwd
+
 import os, shutil
 import keeptalking2.core as core
 
@@ -294,7 +296,38 @@ class Locale:
 			core.sexec("chroot %s /usr/sbin/locale-gen" % (self.target))
 		else:
 			core.sexec("/usr/sbin/locale-gen")
-	
+
+	def create_stamp(self, change_stamp):
+		"""
+		Enables savespace for the language of the given locale.
+		"""
+		
+		if self.no_dbus: return self.create_stamp_offline(change_stamp)
+		
+		self.Service.CreateStamp(
+			'(asb)',
+			change_stamp,
+			True # User interaction
+		)
+
+	def create_stamp_offline(self, change_stamp):
+		"""
+		Creates locale change stamp on every homedir.
+		"""
+		
+		# Create specified stamp files to notify eventual applications
+		# in order for them to react on the locale change
+		for user in [x for x in pwd.getpwall() if x.pw_uid >= 1000 and os.path.exists(x.pw_dir)]:
+			for file in change_stamp:
+				target = os.path.join(user.pw_dir, file)
+				
+				# Create stamp file
+				try:
+					open(target, "w").close()
+					os.chown(target, user.pw_uid, user.pw_gid)
+				except:
+					pass
+
 	def savespace_detect(self, locale):
 		"""
 		Internal.

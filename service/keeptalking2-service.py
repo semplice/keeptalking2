@@ -152,6 +152,24 @@ class Service(dbus.service.Object):
 
 	@dbus.service.method(
 		"org.semplicelinux.keeptalking2",
+		in_signature="asb",
+		sender_keyword="sender",
+		connection_keyword="connection"
+	)
+	def CreateStamp(self, change_stamp, user_interaction, sender, connection):
+		"""
+		This method creates the specified locale-change stamps on every homedir.
+		"""
+		
+		if not self.is_authorized(sender, connection, "org.semplicelinux.keeptalking2.create-stamp", user_interaction):
+			raise Exception("E: Not authorized")
+		
+		self.remove_timeout()
+		self.Locale.create_stamp_offline(change_stamp)
+		self.add_timeout()
+
+	@dbus.service.method(
+		"org.semplicelinux.keeptalking2",
 		in_signature="sb",
 		sender_keyword="sender",
 		connection_keyword="connection"
