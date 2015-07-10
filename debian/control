@@ -1,0 +1,22 @@
+Source: keeptalking2
+Section: admin
+Priority: optional
+Maintainer: Eugenio Paolantonio (g7) <me@medesimo.eu>
+Build-Depends: dh-python, python3-all (>= 3.1.2-7~), debhelper (>= 8.0.0)
+X-Python3-Version: >= 3.2
+Standards-Version: 3.9.5
+Homepage: https://github.com/semplice/keeptalking2
+Vcs-Git: git://github.com/semplice/keeptalking2.git
+Vcs-Browser: https://github.com/semplice/keeptalking2
+
+Package: python3-keeptalking2
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, python3-gi, gir1.2-glib-2.0,
+ ${python:Depends}, python3-dbus, gir1.2-polkit-1.0, coreutils, console-common
+Recommends: systemd | systemd-shim
+Description: Library to interface with internationalization features
+ Keeptalking2 is a python library to interface with the internationalization
+ features of the distribution. 
+ . 
+ It provides a public API that can be used to set/get the Keyboard layout,
+ locale and timezone, as well as get a list of the supported ones.

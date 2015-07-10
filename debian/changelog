@@ -1,0 +1,42 @@
+keeptalking2 (6.20.4-1) unstable; urgency=medium
+
+  * core: execute(): removed custom_log support
+    (keyword remains to avoid API breakages)
+  * Locale: set_offline(): check for the existence of the
+    locale.gen files before reading them
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Tue, 26 Aug 2014 15:56:28 +0200
+
+keeptalking2 (6.20.3-1) unstable; urgency=medium
+
+  * Keyboard: fix typo.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Mon, 25 Aug 2014 22:52:19 +0200
+
+keeptalking2 (6.20.2-1) unstable; urgency=medium
+
+  * Added polkit-authorized DBus service to fix localed's nonsense..
+  * Added no_dbus support on every class and transparently fallback to _offline methods if it's True.
+  * Locale: fix locale.gen appending.
+  * Keyboard: fix is_supported().
+  * Depend on python3-dbus and gir1.2-polkit-1.0.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Mon, 25 Aug 2014 22:26:29 +0200
+
+keeptalking2 (6.20.1-1) unstable; urgency=medium
+
+  * Locale: human_form(): open locales files using latin-1 encoding.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sun, 24 Aug 2014 16:13:12 +0200
+
+keeptalking2 (6.20.0-2) unstable; urgency=medium
+
+  * debian/rules: python -> python3
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sun, 24 Aug 2014 15:49:25 +0200
+
+keeptalking2 (6.20.0-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sun, 24 Aug 2014 15:31:50 +0200
