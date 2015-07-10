@@ -1,3 +1,9 @@
+keeptalking2 (7.0.0-1) unstable; urgency=medium
+
+  * [locale] Added support for creating "notification stamps".
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Fri, 10 Jul 2015 19:42:32 +0200
+
 keeptalking2 (6.20.4-1) unstable; urgency=medium
 
   * core: execute(): removed custom_log support
